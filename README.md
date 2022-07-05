@@ -24,3 +24,50 @@ This architecture consists of a set of loosely coupled services. Each team devel
 We selected the `OrderController` class from the Order Service and `RestaurantController` from the Restaurant service as our chosen components to migrate to microservice architecture as this classes are not too trivial yet have the characteristics needed to become a service.
 ther order controller service is supposed to manage the orders from the customers.
 the restaurant controller service has the information about restaurants and their menus, prices, etc.
+
+## Reusing codes for refactoring
+For extracting each service from the monolith code this is a good stategy to follow below steps:
+
+- Split the code and convert a service into a separate, loosely coupled module within the monolith
+- Split the database and define a separate schema for that service.
+- Define a standalone service
+- Use the standalone service
+- Remove the old and now unused the service functionality codes from the FTGO monolith
+
+## Some Dependencies
+
+> restaurant-service --> order-service:
+where: ftgo-domain\src\main\java\net\chrisrichardson\ftgo\domain\Order.java,class: order
+happened: E:\Fdevelop\univesity\10\Cloud\project\ftgo-monolith\ftgo-monolith\ftgo-domain\src\main\java\net\chrisrichardson\ftgo\domain\Restaurant.java, class: restaurant
+code: getRestaurant()
+reason: imported and used
+solution: REST api
+
+> restaurant-service --> order-service:
+where: ftgo-monolith\ftgo-order-service\src\main\java\net\chrisrichardson\ftgo\orderservice\web\GetOrderResponse.java, class: GetOrderResponse
+happened: E:\Fdevelop\univesity\10\Cloud\project\ftgo-monolith\ftgo-monolith\ftgo-domain\src\main\java\net\chrisrichardson\ftgo\domain\Restaurant.java, class: restaurant        code: getRestaurantName()
+reason: imported and used
+solution: REST api
+
+> restaurant-service --> order-service:
+where: ftgo-monolith\ftgo-order-service-api\src\main\java\net\chrisrichardson\ftgo\orderservice\api\events\OrderDetails.java class: OrderDetails
+happened: E:\Fdevelop\univesity\10\Cloud\project\ftgo-monolith\ftgo-monolith\ftgo-domain\src\main\java\net\chrisrichardson\ftgo\domain\Restaurant.java, class: restaurant        code: getRestaurantName()
+reason: imported and used
+solution: REST api
+
+> accounting-service --> consumer-service:
+where: ftgo-monolith\ftgo-domain\src\main\java\net\chrisrichardson\ftgo\domain\Consumer.java class: Consumer
+happened: ftgo-monolith\ftgo-common\src\main\java\net\chrisrichardson\ftgo\common\Money.java, class: Money        
+code: import net.chrisrichardson.ftgo.common.Money
+reason: imported and used
+solution: REST api
+
+> delivery-service --> order-service:
+where: ftgo-monolith\ftgo-order-service\src\main\java\net\chrisrichardson\ftgo\orderservice\domain\OrderService.java class: orderService
+happened: monolith\ftgo-domain\src\main\java\net\chrisrichardson\ftgo\domain\CourierRepository.java, class: CourierRepository
+code:   private CourierRepository courierRepository;
+reason: imported and used
+solution: REST api
+
+
+
